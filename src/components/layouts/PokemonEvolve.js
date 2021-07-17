@@ -4,12 +4,14 @@ import PokemonContext from "../../reducers/PokemonContext";
 import { getRegionalPokemonID } from "../../pokemonfunc";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Loader from "./Loader";
 
 const PokemonEvolve = ({ chain_url }) => {
   /*https://pokeapi.co/api/v2/evolution-chain/1/ */
 
   const pokemonContext = useContext(PokemonContext);
-  const { getEvolutionChain, clearEvolutionChain, chain } = pokemonContext;
+  const { getEvolutionChain, loading, clearEvolutionChain, chain } =
+    pokemonContext;
 
   const getGen = () => {};
   useEffect(() => {
@@ -18,7 +20,9 @@ const PokemonEvolve = ({ chain_url }) => {
       getEvolutionChain(chain_url);
     }
   }, [chain_url]);
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <div className="my-7">
       <h1 className="text-center">Evolution Chain</h1>
       <Row xs={1} md={3} className="g-4">
@@ -30,7 +34,7 @@ const PokemonEvolve = ({ chain_url }) => {
             >
               <Card.Img
                 variant="top"
-                src={`https://pokeres.bastionbot.org/images/pokemon/${getRegionalPokemonID(
+                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getRegionalPokemonID(
                   ele.url
                 )}.png`}
                 className="mx-auto"

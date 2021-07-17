@@ -12,7 +12,7 @@ const PokeItems = ({ name, id }) => {
           margin: "0 auto",
           filter: "drop-shadow(0 10px 10px rgba(0,0,0,0.2))",
         }}
-        src={`https://pokeres.bastionbot.org/images/pokemon/${id}.png`}
+        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
       />
       <Card.Body>
         <Card.Title>

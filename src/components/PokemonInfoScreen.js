@@ -6,11 +6,12 @@ import PokemonAbility from "./layouts/PokemonAbility";
 import PokemonBaseStat from "./layouts/PokemonBaseStat";
 import PokemonEvolve from "./layouts/PokemonEvolve";
 import SkipPageButtons from "./SkipPageButtons";
+import Loader from "./layouts/Loader";
 
 const PokemonInfoScreen = ({ match }) => {
   const pokemonContext = useContext(PokemonContext);
   const {
-    pokemons,
+    loading,
     getPokemonInfo,
     resetPokemonInfo,
     getPokemonSpecies,
@@ -55,10 +56,12 @@ const PokemonInfoScreen = ({ match }) => {
     getPokemonSpecies(id);
     clearEvolutionChain();
     // eslint-disable-next-line
-  }, [match, id]);
-  return (
+  }, []);
+  return loading ? (
+    <Loader />
+  ) : (
     <section>
-      <Card className="py-1">
+      <Card classNzzzame="py-1">
         <SkipPageButtons page={id} />
         <Card.Img
           variant="top"
@@ -67,7 +70,7 @@ const PokemonInfoScreen = ({ match }) => {
             margin: "0 auto",
             filter: "drop-shadow(0 10px 10px rgba(0,0,0,0.2))",
           }}
-          src={`https://pokeres.bastionbot.org/images/pokemon/${id}.png`}
+          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
         />
         <Card.Body>
           <Card.Title>

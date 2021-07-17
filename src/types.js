@@ -17,3 +17,9 @@ export const CLEAR_POKEMON_SPECIES = "CLEAR_POKEMON_SPECIES";
 //get pokemon evolution chain
 export const GET_POKEMON_CHAIN = "GET_POKEMON_CHAIN";
 export const CLEAR_POKEMON_CHAIN = "CLEAR_POKEMON_CHAIN";
+
+//loading
+export const SET_LOADING = "SET_LOADING";
+
+//error
+export const ERROR = "ERROR";

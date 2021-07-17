@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 
 import PokemonContext from "../../reducers/PokemonContext";
 const RegionPokemon = (props) => {

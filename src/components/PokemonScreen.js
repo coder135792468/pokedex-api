@@ -11,7 +11,7 @@ const PokemonScreen = () => {
     pokemons,
     getPokemons,
     removeFilter,
-
+    loading,
     filter,
     regional_pokemon,
   } = pokemonContext;
@@ -19,9 +19,12 @@ const PokemonScreen = () => {
   useEffect(() => {
     removeFilter();
     getPokemons();
+    // eslint-disable-next-line
   }, []);
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <section>
       <Row xs={1} md={3} className="g-4">
         {filter &&

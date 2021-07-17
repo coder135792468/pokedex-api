@@ -11,6 +11,8 @@ import {
   CLEAR_POKEMON_SPECIES,
   GET_POKEMON_CHAIN,
   CLEAR_POKEMON_CHAIN,
+  SET_LOADING,
+  ERROR,
 } from "../types";
 import axios from "axios";
 import PokemonContext from "./PokemonContext";
@@ -25,23 +27,31 @@ const PokemonState = (props) => {
     current_pokemon: null,
     current_pokemon_species: null,
     chain: null,
+    loading: false,
   };
 
   const [state, dispatch] = useReducer(PokemonReducer, initialState);
   const getPokemons = async () => {
-    const { data } = await axios.get(
-      "https://pokeapi.co/api/v2/pokemon?limit=150",
-      {
-        headers: {
-          "Content-type": "application/json",
-        },
-      }
-    );
+    try {
+      setLoading();
+      const { data } = await axios.get(
+        "https://pokeapi.co/api/v2/pokemon?limit=150",
+        {
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
 
-    dispatch({
-      type: GET_POKEMON,
-      payload: data.results,
-    });
+      dispatch({
+        type: GET_POKEMON,
+        payload: data.results,
+      });
+    } catch (error) {
+      dispatch({
+        type: ERROR,
+      });
+    }
   };
 
   const filterPokemon = (text) => {
@@ -57,17 +67,23 @@ const PokemonState = (props) => {
   };
 
   const regionalPokemon = async (region) => {
-    if (region == "none") return clearRegionalFilter();
-    const regional = region_data[region];
-    // const { limit, offset } = regional;
-
-    const { data } = await axios.get(
-      ` https://pokeapi.co/api/v2/pokedex/${regional}/`
-    );
-    dispatch({
-      type: REGIONAL_POKEMON,
-      payload: data.pokemon_entries,
-    });
+    try {
+      if (region == "none") return clearRegionalFilter();
+      const regional = region_data[region];
+      // const { limit, offset } = regional;
+      setLoading();
+      const { data } = await axios.get(
+        ` https://pokeapi.co/api/v2/pokedex/${regional}/`
+      );
+      dispatch({
+        type: REGIONAL_POKEMON,
+        payload: data.pokemon_entries,
+      });
+    } catch (error) {
+      dispatch({
+        type: ERROR,
+      });
+    }
   };
 
   //clear filter for regions
@@ -79,13 +95,20 @@ const PokemonState = (props) => {
 
   //get pokemon by id
   const getPokemonInfo = async (id) => {
-    const { data } = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${id}/`
-    );
-    dispatch({
-      type: GET_POKEMON_INFO,
-      payload: data,
-    });
+    try {
+      setLoading();
+      const { data } = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon/${id}/`
+      );
+      dispatch({
+        type: GET_POKEMON_INFO,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ERROR,
+      });
+    }
   };
 
   const resetPokemonInfo = () => {
@@ -98,19 +121,27 @@ const PokemonState = (props) => {
   const getPokemonSpecies = async (id) => {
     // const { data } = await fetch(
     //   `https://pokeapi.co/api/v2/evolution-chain/${id}/`
-    // );
-    const { data } = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon-species/${id}`,
-      {
-        headers: {
-          "Content-type": "application/json",
-        },
-      }
-    );
-    dispatch({
-      type: GET_POKEMON_SPECIES,
-      payload: data,
-    });
+
+    try {
+      // );
+      setLoading();
+      const { data } = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon-species/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
+      dispatch({
+        type: GET_POKEMON_SPECIES,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ERROR,
+      });
+    }
   };
   const clearPokemonSpecies = () => {
     dispatch({
@@ -120,30 +151,16 @@ const PokemonState = (props) => {
 
   //get pokemon evolution chain
   const getEvolutionChain = async (url) => {
-    // axios
-    //   .get(chain)
-    //   .then(function (res) {
-    //     dispatch({
-    //       type: GET_POKEMON_CHAIN,
-    //       payload: res.data,
-    //     });
-    //   })
-    //   .catch(function (res) {
-    //     if (res instanceof Error) {
-    //       console.log(res.message);
-    //     } else {
-    //       console.log(res.data);
-    //     }
-    //   });
     try {
+      setLoading();
       const { data } = await axios.get(url);
       const gen = [];
       gen.push(data.chain.species);
 
-      if (data.chain.evolves_to) {
+      if (data.chain.evolves_to.length !== 0) {
         let newChain = data.chain.evolves_to[0];
         gen.push(newChain.species);
-        if (newChain.evolves_to) {
+        if (newChain.evolves_to.length !== 0) {
           gen.push(newChain.evolves_to[0].species);
         }
       }
@@ -153,7 +170,9 @@ const PokemonState = (props) => {
         payload: gen,
       });
     } catch (error) {
-      console.log(error.message);
+      dispatch({
+        type: ERROR,
+      });
     }
   };
 
@@ -164,6 +183,12 @@ const PokemonState = (props) => {
     });
   };
 
+  //set laoding
+  const setLoading = () => {
+    dispatch({
+      type: SET_LOADING,
+    });
+  };
   return (
     <PokemonContext.Provider
       value={{
@@ -174,6 +199,7 @@ const PokemonState = (props) => {
         regional_pokemon: state.regional_pokemon,
         current_pokemon_species: state.current_pokemon_species,
         chain: state.chain,
+        loading: state.loading,
         getPokemons,
         filterPokemon,
         removeFilter,
