@@ -18,7 +18,7 @@ const SkipPageButtons = ({ page }) => {
       </Link>
       <Link
         to={`/pokemon/${
-          parseInt(page) < 100 ? parseInt(page) + 1 : parseInt(page)
+          parseInt(page) < 1010 ? parseInt(page) + 1 : parseInt(page)
         }`}
         className="mx-3"
       >
