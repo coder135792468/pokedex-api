@@ -1,20 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Button } from "react-bootstrap";
-import axios from "axios";
+
 import PokemonContext from "../reducers/PokemonContext";
 import PokemonAbility from "./layouts/PokemonAbility";
+import PokemonBaseStat from "./layouts/PokemonBaseStat";
+import PokemonEvolve from "./layouts/PokemonEvolve";
 import SkipPageButtons from "./SkipPageButtons";
-import PokemonMoves from "./layouts/PokemonMoves";
-import PokemonType from "./layouts/PokemonType";
+
 const PokemonInfoScreen = ({ match }) => {
   const pokemonContext = useContext(PokemonContext);
-  const { pokemons, getPokemons } = pokemonContext;
+  const {
+    pokemons,
+    getPokemonInfo,
+    resetPokemonInfo,
+    getPokemonSpecies,
+    clearPokemonSpecies,
+    current_pokemon_species,
+    current_pokemon,
+    clearEvolutionChain,
+  } = pokemonContext;
 
   const id = match.params.id;
   const [showAbility, setShowAbility] = useState(true);
   const [showMoves, setShowMoves] = useState(false);
   const [showType, setShowType] = useState(false);
-  const [pokemonInfo, setPokemonInfo] = useState();
 
   const showInfo = (infotype) => {
     switch (infotype) {
@@ -40,17 +49,13 @@ const PokemonInfoScreen = ({ match }) => {
     }
   };
   useEffect(() => {
-    getPokemons();
-    const getPokemonInfo = async (id) => {
-      const { data } = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon/${id}/`
-      );
-      setPokemonInfo(data);
-    };
+    resetPokemonInfo();
     getPokemonInfo(id);
-
+    clearPokemonSpecies();
+    getPokemonSpecies(id);
+    clearEvolutionChain();
     // eslint-disable-next-line
-  }, [match, getPokemons, id]);
+  }, [match, id]);
   return (
     <section>
       <Card className="py-1">
@@ -67,7 +72,7 @@ const PokemonInfoScreen = ({ match }) => {
         <Card.Body>
           <Card.Title>
             <h3 className="text-center">
-              # {pokemons[id - 1]?.name.toUpperCase()}
+              # {current_pokemon?.name.toUpperCase()}
             </h3>
           </Card.Title>
           <Card.Text
@@ -80,10 +85,14 @@ const PokemonInfoScreen = ({ match }) => {
           </Card.Text>
         </Card.Body>
 
-        {showAbility && <PokemonAbility pokemonInfo={pokemonInfo} />}
-        {showMoves && <PokemonMoves pokemonInfo={pokemonInfo} />}
-        {showType && <PokemonType pokemonInfo={pokemonInfo} />}
+        {showAbility && (
+          <PokemonAbility info={current_pokemon} type={"ability"} />
+        )}
+        {showMoves && <PokemonAbility info={current_pokemon} type="move" />}
+        {showType && <PokemonAbility info={current_pokemon} type="type" />}
       </Card>
+      <PokemonBaseStat poke={current_pokemon} />
+      <PokemonEvolve chain_url={current_pokemon_species?.evolution_chain.url} />
     </section>
   );
 };

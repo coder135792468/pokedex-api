@@ -11,7 +11,7 @@ const Loader = () => {
       }}
       animation="border"
     >
-      {/* <span className="visually-hidden">Loading...</span>/ */}
+      {/* <span className="visually-hidden">Loading...</span> */}
     </Spinner>
   );
 };

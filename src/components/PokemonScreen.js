@@ -2,34 +2,62 @@ import React, { useContext, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import PokeItems from "./PokeItems";
 import PokemonContext from "../reducers/PokemonContext";
+
 import Loader from "./layouts/Loader";
+import { getPokemonID, getRegionalPokemonID } from "../pokemonfunc";
 const PokemonScreen = () => {
   const pokemonContext = useContext(PokemonContext);
-  const { pokemons, getPokemons, filter } = pokemonContext;
+  const {
+    pokemons,
+    getPokemons,
+    removeFilter,
+
+    filter,
+    regional_pokemon,
+  } = pokemonContext;
 
   useEffect(() => {
+    removeFilter();
     getPokemons();
-  }, [pokemons, getPokemons, filter]);
+  }, []);
 
-  return pokemons.length ? (
+  return (
     <section>
-      {filter !== null &&
-        filter?.map((ele, index) => (
-          <Col key={index + 1}>
-            <PokeItems name={ele.name} url={ele.url} />
-          </Col>
-        ))}
       <Row xs={1} md={3} className="g-4">
-        {filter == null &&
-          pokemons.map((ele, index) => (
+        {filter &&
+          filter?.map((ele, index) => (
             <Col key={index + 1}>
-              <PokeItems name={ele.name} url={ele.url} />
+              {regional_pokemon == null && (
+                <PokeItems name={ele.name} id={getPokemonID(ele.url)} />
+              )}
+              {regional_pokemon && (
+                <PokeItems
+                  name={ele.pokemon_species.name}
+                  id={getRegionalPokemonID(ele.pokemon_species.url)}
+                />
+              )}
+            </Col>
+          ))}
+
+        {!filter &&
+          regional_pokemon &&
+          regional_pokemon?.map((ele, index) => (
+            <Col>
+              <PokeItems
+                name={ele.pokemon_species.name}
+                id={getRegionalPokemonID(ele.pokemon_species.url)}
+              />
+            </Col>
+          ))}
+        {!filter &&
+          !regional_pokemon &&
+          pokemons?.map((ele, index) => (
+            <Col key={index + 1}>
+              <PokeItems name={ele.name} id={getPokemonID(ele.url)} />
             </Col>
           ))}
       </Row>
     </section>
-  ) : (
-    <Loader />
   );
 };
 
