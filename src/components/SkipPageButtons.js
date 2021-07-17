@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import PokemonContext from "../reducers/PokemonContext";
 
 const SkipPageButtons = ({ page }) => {
+  const pokemonContext = useContext(PokemonContext);
+  const { start, end } = pokemonContext;
   return (
     <Card.Text
       style={{ justifyContent: "space-between" }}
@@ -10,7 +13,7 @@ const SkipPageButtons = ({ page }) => {
     >
       <Link
         to={`/pokemon/${
-          parseInt(page) > 1 ? parseInt(page) - 1 : parseInt(page)
+          parseInt(page) > start + 1 ? parseInt(page) - 1 : parseInt(page)
         }`}
         className="mx-3"
       >
@@ -18,7 +21,7 @@ const SkipPageButtons = ({ page }) => {
       </Link>
       <Link
         to={`/pokemon/${
-          parseInt(page) < 1010 ? parseInt(page) + 1 : parseInt(page)
+          parseInt(page) < end ? parseInt(page) + 1 : parseInt(page)
         }`}
         className="mx-3"
       >

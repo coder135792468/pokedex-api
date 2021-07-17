@@ -18,6 +18,7 @@ import axios from "axios";
 import PokemonContext from "./PokemonContext";
 import PokemonReducer from "./PokemonReducer";
 import { region_data } from "../pokemonfunc";
+import { getGen } from "../pokemonfunc";
 const PokemonState = (props) => {
   const initialState = {
     pokemons: [],
@@ -28,6 +29,8 @@ const PokemonState = (props) => {
     current_pokemon_species: null,
     chain: null,
     loading: false,
+    start: 1,
+    end: 150,
   };
 
   const [state, dispatch] = useReducer(PokemonReducer, initialState);
@@ -149,21 +152,6 @@ const PokemonState = (props) => {
     });
   };
 
-  const getGen = (data) => {
-    const gen = [];
-    let chain = data.chain;
-    const addGen = () => {
-      gen.push(chain.species);
-      if (chain.evolves_to.length !== 0) {
-        chain = chain.evolves_to[0];
-        addGen();
-      } else {
-        return;
-      }
-    };
-    addGen();
-    return gen;
-  };
   //get pokemon evolution chain
   const getEvolutionChain = async (url) => {
     try {
@@ -205,6 +193,8 @@ const PokemonState = (props) => {
         current_pokemon_species: state.current_pokemon_species,
         chain: state.chain,
         loading: state.loading,
+        start: state.start,
+        end: state.end,
         getPokemons,
         filterPokemon,
         removeFilter,

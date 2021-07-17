@@ -19,4 +19,20 @@ const getRegionalPokemonID = (url) => {
   return url.split("pokemon-species/")[1].split("/")[0];
 };
 
-export { region_data, getPokemonID, getRegionalPokemonID };
+const getGen = (data) => {
+  const gen = [];
+  let chain = data.chain;
+  const addGen = () => {
+    gen.push(chain.species);
+    if (chain.evolves_to.length !== 0) {
+      chain = chain.evolves_to[0];
+      addGen();
+    } else {
+      return;
+    }
+  };
+  addGen();
+  return gen;
+};
+
+export { region_data, getPokemonID, getRegionalPokemonID, getGen };

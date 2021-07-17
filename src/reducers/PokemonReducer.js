@@ -1,3 +1,4 @@
+import { act } from "react-dom/cjs/react-dom-test-utils.production.min";
 import {
   CLEAR_POKEMON_CHAIN,
   CLEAR_POKEMON_SPECIES,
@@ -13,6 +14,7 @@ import {
   RESET_POKEMON_INFO,
   SET_LOADING,
 } from "../types";
+import { getPokemonID, getRegionalPokemonID } from "../pokemonfunc";
 const PokemonReducer = (state, action) => {
   switch (action.type) {
     case SET_LOADING:
@@ -24,6 +26,8 @@ const PokemonReducer = (state, action) => {
       return {
         ...state,
         pokemons: action.payload,
+        start: getPokemonID(action.payload[0].url),
+        end: getPokemonID(action.payload[action.payload.length - 1].url),
         loading: false,
       };
 
@@ -51,9 +55,14 @@ const PokemonReducer = (state, action) => {
         filter: null,
       };
     case REGIONAL_POKEMON:
+      console.log(action.payload[0]);
       return {
         ...state,
         regional_pokemon: action.payload,
+        start: getRegionalPokemonID(action.payload[0].pokemon_species.url),
+        end: getRegionalPokemonID(
+          action.payload[action.payload.length - 1].pokemon_species.url
+        ),
         loading: false,
       };
     case GET_POKEMON_INFO:
