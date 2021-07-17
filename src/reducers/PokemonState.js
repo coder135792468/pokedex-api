@@ -149,25 +149,30 @@ const PokemonState = (props) => {
     });
   };
 
+  const getGen = (data) => {
+    const gen = [];
+    let chain = data.chain;
+    const addGen = () => {
+      gen.push(chain.species);
+      if (chain.evolves_to.length !== 0) {
+        chain = chain.evolves_to[0];
+        addGen();
+      } else {
+        return;
+      }
+    };
+    addGen();
+    return gen;
+  };
   //get pokemon evolution chain
   const getEvolutionChain = async (url) => {
     try {
       setLoading();
       const { data } = await axios.get(url);
-      const gen = [];
-      gen.push(data.chain.species);
-
-      if (data.chain.evolves_to.length !== 0) {
-        let newChain = data.chain.evolves_to[0];
-        gen.push(newChain.species);
-        if (newChain.evolves_to.length !== 0) {
-          gen.push(newChain.evolves_to[0].species);
-        }
-      }
 
       dispatch({
         type: GET_POKEMON_CHAIN,
-        payload: gen,
+        payload: getGen(data),
       });
     } catch (error) {
       dispatch({
