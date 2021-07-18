@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import PokemonState from "./reducers/PokemonState";
+import PokemonState from "./store/PokemonState";
 ReactDOM.render(
   <PokemonState>
     <App />

@@ -1,25 +1,31 @@
 import React, { useContext } from "react";
 
-import PokemonContext from "../../reducers/PokemonContext";
-const RegionPokemon = (props) => {
+import PokemonContext from "../../store/PokemonContext";
+const RegionPokemon = ({ clearText }) => {
   const pokemonContext = useContext(PokemonContext);
   const { regionalPokemon } = pokemonContext;
 
   const onChange = (e) => {
     regionalPokemon(e.target.value);
-    props.clearText();
+    clearText();
   };
-
+  const regions = [
+    "none",
+    "kanto",
+    "johto",
+    "hoenn",
+    "sinnoh",
+    "unova",
+    "kalos",
+    "alola",
+  ];
   return (
     <select className="custom-select" onChange={onChange}>
-      <option value="none">Select Region</option>
-      <option value="kanto">Kanto</option>
-      <option value="johto">Johto</option>
-      <option value="hoenn">Hoenn</option>
-      <option value="sinnoh">Sinnoh</option>
-      <option value="unova">Unova</option>
-      <option value="kalos">Kalos</option>
-      <option value="alola">Alola</option>
+      {regions.map((region, i) => (
+        <option key={i + 1} value={region}>
+          {region === "none" ? "Select Region" : region}
+        </option>
+      ))}
     </select>
   );
 };

@@ -4,9 +4,9 @@ const region_data = {
   johto: 3,
   hoenn: 4,
   sinnoh: 5,
-  unova: 6,
-  kalos: 7,
-  alola: 8,
+  unova: 8,
+  kalos: 12,
+  alola: 16,
 
   /*  https://pokeapi.co/api/v2/pokedex/4/ */
 };

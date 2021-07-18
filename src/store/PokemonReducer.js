@@ -1,4 +1,3 @@
-import { act } from "react-dom/cjs/react-dom-test-utils.production.min";
 import {
   CLEAR_POKEMON_CHAIN,
   CLEAR_POKEMON_SPECIES,
@@ -13,8 +12,7 @@ import {
   REMOVE_FILTER,
   RESET_POKEMON_INFO,
   SET_LOADING,
-} from "../types";
-import { getPokemonID, getRegionalPokemonID } from "../pokemonfunc";
+} from "./types";
 const PokemonReducer = (state, action) => {
   switch (action.type) {
     case SET_LOADING:
@@ -26,8 +24,6 @@ const PokemonReducer = (state, action) => {
       return {
         ...state,
         pokemons: action.payload,
-        start: getPokemonID(action.payload[0].url),
-        end: getPokemonID(action.payload[action.payload.length - 1].url),
         loading: false,
       };
 
@@ -36,7 +32,7 @@ const PokemonReducer = (state, action) => {
         let f = state.regional_pokemon.filter((ele) =>
           ele.pokemon_species.name.match(new RegExp(`${action.payload}`, "gi"))
         );
-        // console.log(f);
+
         return {
           ...state,
           filter: f,
@@ -55,14 +51,9 @@ const PokemonReducer = (state, action) => {
         filter: null,
       };
     case REGIONAL_POKEMON:
-      console.log(action.payload[0]);
       return {
         ...state,
         regional_pokemon: action.payload,
-        start: getRegionalPokemonID(action.payload[0].pokemon_species.url),
-        end: getRegionalPokemonID(
-          action.payload[action.payload.length - 1].pokemon_species.url
-        ),
         loading: false,
       };
     case GET_POKEMON_INFO:
@@ -107,6 +98,7 @@ const PokemonReducer = (state, action) => {
     case ERROR:
       return {
         ...state,
+        error: action.payload,
         loading: false,
       };
     default:

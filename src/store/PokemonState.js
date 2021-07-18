@@ -13,12 +13,12 @@ import {
   CLEAR_POKEMON_CHAIN,
   SET_LOADING,
   ERROR,
-} from "../types";
+} from "./types";
 import axios from "axios";
 import PokemonContext from "./PokemonContext";
 import PokemonReducer from "./PokemonReducer";
-import { region_data } from "../pokemonfunc";
-import { getGen } from "../pokemonfunc";
+import { region_data } from "../utils";
+import { getGen } from "../utils";
 const PokemonState = (props) => {
   const initialState = {
     pokemons: [],
@@ -29,8 +29,7 @@ const PokemonState = (props) => {
     current_pokemon_species: null,
     chain: null,
     loading: false,
-    start: 1,
-    end: 150,
+    error: null,
   };
 
   const [state, dispatch] = useReducer(PokemonReducer, initialState);
@@ -53,6 +52,7 @@ const PokemonState = (props) => {
     } catch (error) {
       dispatch({
         type: ERROR,
+        payload: error.message,
       });
     }
   };
@@ -71,9 +71,9 @@ const PokemonState = (props) => {
 
   const regionalPokemon = async (region) => {
     try {
-      if (region == "none") return clearRegionalFilter();
+      if (region === "none") return clearRegionalFilter();
       const regional = region_data[region];
-      // const { limit, offset } = regional;
+
       setLoading();
       const { data } = await axios.get(
         ` https://pokeapi.co/api/v2/pokedex/${regional}/`
@@ -85,6 +85,7 @@ const PokemonState = (props) => {
     } catch (error) {
       dispatch({
         type: ERROR,
+        payload: error.message,
       });
     }
   };
@@ -110,6 +111,7 @@ const PokemonState = (props) => {
     } catch (error) {
       dispatch({
         type: ERROR,
+        payload: error.message,
       });
     }
   };
@@ -122,11 +124,7 @@ const PokemonState = (props) => {
 
   //get pokemon species
   const getPokemonSpecies = async (id) => {
-    // const { data } = await fetch(
-    //   `https://pokeapi.co/api/v2/evolution-chain/${id}/`
-
     try {
-      // );
       setLoading();
       const { data } = await axios.get(
         `https://pokeapi.co/api/v2/pokemon-species/${id}`,
@@ -143,6 +141,7 @@ const PokemonState = (props) => {
     } catch (error) {
       dispatch({
         type: ERROR,
+        payload: error.message,
       });
     }
   };
@@ -154,9 +153,14 @@ const PokemonState = (props) => {
 
   //get pokemon evolution chain
   const getEvolutionChain = async (url) => {
+    /*https://pokeapi.co/api/v2/evolution-chain/1/ */
     try {
       setLoading();
-      const { data } = await axios.get(url);
+      const { data } = await axios.get(url, {
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
 
       dispatch({
         type: GET_POKEMON_CHAIN,
@@ -193,8 +197,8 @@ const PokemonState = (props) => {
         current_pokemon_species: state.current_pokemon_species,
         chain: state.chain,
         loading: state.loading,
-        start: state.start,
-        end: state.end,
+
+        error: state.error,
         getPokemons,
         filterPokemon,
         removeFilter,

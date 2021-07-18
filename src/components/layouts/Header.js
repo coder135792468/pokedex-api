@@ -1,22 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { Navbar, Button, Form } from "react-bootstrap";
-import PokemonContext from "../../reducers/PokemonContext";
+import { Navbar, Form } from "react-bootstrap";
+import PokemonContext from "../../store/PokemonContext";
 import RegionPokemon from "./RegionPokemon";
+
 const Header = () => {
+  const location = useLocation().pathname;
   const pokemonContext = useContext(PokemonContext);
-  const { filterPokemon, removeFilter, filter } = pokemonContext;
+  const { filterPokemon, removeFilter } = pokemonContext;
 
   const [text, setText] = useState("");
   const [search, setSearch] = useState(false);
-  // console.log(window.location.pathname);
-  const location = useLocation().pathname;
+
   useEffect(() => {
-    if (filter == null) {
-      setText("");
-    }
-  }, [filter]);
+    if (text === "") removeFilter();
+    // eslint-disable-next-line
+  }, [text]);
+
   useEffect(() => {
     if (location === "/") {
       setSearch(true);
@@ -24,32 +25,45 @@ const Header = () => {
       setSearch(false);
     }
   }, [location]);
-  const submitHandler = (e) => {
-    e.preventDefault();
 
+  const onChange = ({ target: { value } }) => {
+    setText(value);
     removeFilter();
     filterPokemon(text);
-    setText("");
   };
   const clearText = () => {
     setText("");
     removeFilter();
   };
   return (
-    <header style={{ position: "sticky", top: "0", zIndex: "2" }}>
-      <Navbar bg="primary" expand="lg" varient="dark">
+    <header>
+      <Navbar className="w-100 header" expand="lg" varient="light">
         <Navbar.Brand>
           {" "}
           <Link to="/" className="text-white text-decoration-none">
-            <i className="fas fa-home mx-.5"></i>
+            <i className="fas fa-home mx-2"></i>
             POKEMON API{" "}
           </Link>
         </Navbar.Brand>
         {search && (
           <>
-            <Navbar.Toggle aria-controls="navbarScroll" />
+            <Navbar.Toggle
+              type="button"
+              className="toggler"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarScroll"
+              aria-controls="navbarScroll"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span style={{ color: "white" }} className="fas fa-bars"></span>
+            </Navbar.Toggle>
+
             <Navbar.Collapse id="navbarScroll">
-              <Form onSubmit={submitHandler} className="d-flex my-1 mx-auto">
+              <Form
+                onSubmit={(e) => e.preventDefault()}
+                className="d-flex my-1 mx-auto"
+              >
                 <div className="input-group">
                   <Form.Control
                     type="search"
@@ -57,12 +71,10 @@ const Header = () => {
                     className="mr-2 from-control"
                     aria-label="Search"
                     value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    onChange={onChange}
                   ></Form.Control>
                 </div>
-                <Button variant="outline-success" className="btn btn-light">
-                  Search
-                </Button>
+
                 <RegionPokemon clearText={clearText} />
               </Form>
             </Navbar.Collapse>
