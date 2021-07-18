@@ -6,8 +6,9 @@ const SkipPageButtons = ({ page }) => {
     <Card.Text
       style={{
         position: "relative",
-        top: "50px",
+        top: "40px",
         justifyContent: "space-between",
+        zIndex: "3",
       }}
       className="d-flex my-4"
     >

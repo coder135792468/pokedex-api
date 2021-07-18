@@ -10,6 +10,7 @@ import Loader from "./layouts/Loader";
 import PokemonMoves from "./layouts/PokemonMoves";
 import { Helmet } from "react-helmet";
 import "./styles/styles.scss";
+import ScrollButton from "./layouts/ScrollButton";
 const PokemonInfoScreen = ({ match }) => {
   const pokemonContext = useContext(PokemonContext);
   const {
@@ -75,6 +76,7 @@ const PokemonInfoScreen = ({ match }) => {
       <PokemonBaseStat poke={current_pokemon} />
       <PokemonEvolve chain_url={current_pokemon_species?.evolution_chain.url} />
       <PokemonMoves info={current_pokemon} />
+      <ScrollButton top={500} />
     </section>
   );
 };

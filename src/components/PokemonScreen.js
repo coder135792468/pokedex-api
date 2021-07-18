@@ -69,7 +69,7 @@ const PokemonScreen = () => {
             )}
         </Row>
 
-        <ScrollButton />
+        <ScrollButton top={600} />
       </section>
     )
   );

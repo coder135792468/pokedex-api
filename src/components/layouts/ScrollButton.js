@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import "../styles/styles.scss";
-const ScrollButton = () => {
+const ScrollButton = ({ top }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     window.addEventListener("scroll", () =>
-      setVisible(document?.documentElement?.scrollTop < 600 ? false : true)
+      setVisible(document?.documentElement?.scrollTop < top ? false : true)
     );
-  }, []);
+  }, [setVisible, top]);
   return (
     <Button
       className="scroll_button"
