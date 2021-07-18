@@ -7,10 +7,6 @@ import {
   CLEAR_REGIONAL_FILTER,
   GET_POKEMON_INFO,
   RESET_POKEMON_INFO,
-  GET_POKEMON_SPECIES,
-  CLEAR_POKEMON_SPECIES,
-  GET_POKEMON_CHAIN,
-  CLEAR_POKEMON_CHAIN,
   SET_LOADING,
   ERROR,
 } from "./types";
@@ -19,6 +15,13 @@ import PokemonContext from "./PokemonContext";
 import PokemonReducer from "./PokemonReducer";
 import { region_data } from "../utils";
 import { getGen } from "../utils";
+
+const config = {
+  headers: {
+    "Content-type": "application/json",
+  },
+};
+
 const PokemonState = (props) => {
   const initialState = {
     pokemons: [],
@@ -35,14 +38,10 @@ const PokemonState = (props) => {
   const [state, dispatch] = useReducer(PokemonReducer, initialState);
   const getPokemons = async () => {
     try {
-      setLoading();
+      setLoading(true);
       const { data } = await axios.get(
         "https://pokeapi.co/api/v2/pokemon?limit=150",
-        {
-          headers: {
-            "Content-type": "application/json",
-          },
-        }
+        config
       );
 
       dispatch({
@@ -74,7 +73,7 @@ const PokemonState = (props) => {
       if (region === "none") return clearRegionalFilter();
       const regional = region_data[region];
 
-      setLoading();
+      setLoading(true);
       const { data } = await axios.get(
         ` https://pokeapi.co/api/v2/pokedex/${regional}/`
       );
@@ -99,20 +98,35 @@ const PokemonState = (props) => {
 
   //get pokemon by id
   const getPokemonInfo = async (id) => {
+    setLoading(true);
+    resetPokemonInfo();
     try {
-      setLoading();
       const { data } = await axios.get(
         `https://pokeapi.co/api/v2/pokemon/${id}/`
       );
+      const { data: pokemonSpecies } = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon-species/${id}`,
+        config
+      );
+      const { data: pokemonEvolution } = await axios.get(
+        pokemonSpecies.evolution_chain.url,
+        config
+      );
       dispatch({
         type: GET_POKEMON_INFO,
-        payload: data,
+        payload: {
+          info: data,
+          pokemonSpecies,
+          pokemonEvolution: getGen(pokemonEvolution),
+        },
       });
     } catch (error) {
       dispatch({
         type: ERROR,
         payload: error.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,68 +136,11 @@ const PokemonState = (props) => {
     });
   };
 
-  //get pokemon species
-  const getPokemonSpecies = async (id) => {
-    try {
-      setLoading();
-      const { data } = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon-species/${id}`,
-        {
-          headers: {
-            "Content-type": "application/json",
-          },
-        }
-      );
-      dispatch({
-        type: GET_POKEMON_SPECIES,
-        payload: data,
-      });
-    } catch (error) {
-      dispatch({
-        type: ERROR,
-        payload: error.message,
-      });
-    }
-  };
-  const clearPokemonSpecies = () => {
-    dispatch({
-      type: CLEAR_POKEMON_SPECIES,
-    });
-  };
-
-  //get pokemon evolution chain
-  const getEvolutionChain = async (url) => {
-    /*https://pokeapi.co/api/v2/evolution-chain/1/ */
-    try {
-      setLoading();
-      const { data } = await axios.get(url, {
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
-
-      dispatch({
-        type: GET_POKEMON_CHAIN,
-        payload: getGen(data),
-      });
-    } catch (error) {
-      dispatch({
-        type: ERROR,
-      });
-    }
-  };
-
-  //clear pokemon ecolution chain
-  const clearEvolutionChain = () => {
-    dispatch({
-      type: CLEAR_POKEMON_CHAIN,
-    });
-  };
-
   //set laoding
-  const setLoading = () => {
+  const setLoading = (isLoading) => {
     dispatch({
       type: SET_LOADING,
+      payload: isLoading,
     });
   };
   return (
@@ -197,18 +154,12 @@ const PokemonState = (props) => {
         current_pokemon_species: state.current_pokemon_species,
         chain: state.chain,
         loading: state.loading,
-
         error: state.error,
         getPokemons,
         filterPokemon,
         removeFilter,
         regionalPokemon,
         getPokemonInfo,
-        resetPokemonInfo,
-        getPokemonSpecies,
-        clearPokemonSpecies,
-        getEvolutionChain,
-        clearEvolutionChain,
       }}
     >
       {props.children}

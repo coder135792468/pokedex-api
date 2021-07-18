@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Row } from "react-bootstrap";
 import PokemonContext from "../../store/PokemonContext";
 import { getRegionalPokemonID } from "../../utils";
@@ -6,18 +6,10 @@ import PokeItems from "../PokeItems";
 import Loader from "./Loader";
 import "../styles/styles.scss";
 
-const PokemonEvolve = ({ chain_url }) => {
+const PokemonEvolve = () => {
   const pokemonContext = useContext(PokemonContext);
-  const { getEvolutionChain, loading, error, clearEvolutionChain, chain } =
-    pokemonContext;
+  const { loading, error, chain } = pokemonContext;
 
-  useEffect(() => {
-    if (!chain) {
-      clearEvolutionChain();
-      getEvolutionChain(chain_url);
-    }
-    // eslint-disable-next-line
-  }, [chain_url]);
   return loading && !error ? (
     <Loader />
   ) : (

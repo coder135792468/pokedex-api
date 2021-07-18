@@ -1,23 +1,37 @@
 import React from "react";
-import { ListGroup } from "react-bootstrap";
 const propToList = {
-  ability: "abilities",
-  type: "types",
+  flying: "blue",
+  grass: "green",
+  water: "blue",
+  psychic: "brown",
+  ghost: "black",
+  poison: "black",
+  electric: "rgb(204, 204, 10)",
+  ground: "darkblue",
+  rock: "red",
+  bug: "green",
+  ice: "blue",
+  dark: "black",
+  steel: "artifact",
+  dragon: "red",
+  normal: "purple",
+  fire: "tomato",
 };
 
-const PokemonDetailList = ({ info, type }) => {
+const PokemonDetailList = ({ info }) => {
   return (
-    <ListGroup
-      style={{ height: "auto", maxHeight: "200px", overflowY: "scroll" }}
-      as="ul"
-    >
-      {info?.[propToList[type]].map((ele, index) => (
-        <ListGroup.Item key={index} as="li">
+    <div className="details">
+      <h2 className="text-center my-2">Type</h2>
+      {info?.types.map((ele, index) => (
+        <span
+          key={index}
+          style={{ background: propToList[ele.type.name.toLowerCase()] }}
+        >
           <i className="fas fa-star mx-3" style={{ color: "orange" }}></i>
-          {ele[type].name.toUpperCase()}
-        </ListGroup.Item>
+          {ele.type.name.toUpperCase()}
+        </span>
       ))}
-    </ListGroup>
+    </div>
   );
 };
 

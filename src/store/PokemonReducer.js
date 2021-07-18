@@ -1,36 +1,33 @@
 import {
-  CLEAR_POKEMON_CHAIN,
-  CLEAR_POKEMON_SPECIES,
   CLEAR_REGIONAL_FILTER,
   ERROR,
   FILTER,
   GET_POKEMON,
-  GET_POKEMON_CHAIN,
   GET_POKEMON_INFO,
-  GET_POKEMON_SPECIES,
   REGIONAL_POKEMON,
   REMOVE_FILTER,
   RESET_POKEMON_INFO,
   SET_LOADING,
 } from "./types";
 const PokemonReducer = (state, action) => {
-  switch (action.type) {
+  const { type, payload } = action;
+  switch (type) {
     case SET_LOADING:
       return {
         ...state,
-        loading: true,
+        loading: payload,
       };
     case GET_POKEMON:
       return {
         ...state,
-        pokemons: action.payload,
+        pokemons: payload,
         loading: false,
       };
 
     case FILTER:
       if (state.regional_pokemon !== null) {
         let f = state.regional_pokemon.filter((ele) =>
-          ele.pokemon_species.name.match(new RegExp(`${action.payload}`, "gi"))
+          ele.pokemon_species.name.match(new RegExp(`${payload}`, "gi"))
         );
 
         return {
@@ -41,7 +38,7 @@ const PokemonReducer = (state, action) => {
         return {
           ...state,
           filter: state.pokemons.filter((ele) =>
-            ele.name.match(new RegExp(`${action.payload}`, "gi"))
+            ele.name.match(new RegExp(`${payload}`, "gi"))
           ),
         };
       }
@@ -53,35 +50,22 @@ const PokemonReducer = (state, action) => {
     case REGIONAL_POKEMON:
       return {
         ...state,
-        regional_pokemon: action.payload,
+        regional_pokemon: payload,
         loading: false,
       };
     case GET_POKEMON_INFO:
       return {
         ...state,
-        current_pokemon: action.payload,
-        loading: false,
+        current_pokemon: payload.info,
+        current_pokemon_species: payload.pokemonSpecies,
+        chain: payload.pokemonEvolution,
       };
-    case GET_POKEMON_SPECIES:
-      return {
-        ...state,
-        current_pokemon_species: action.payload,
-        loading: false,
-      };
-    case GET_POKEMON_CHAIN:
-      return {
-        ...state,
-        chain: action.payload,
-        loading: false,
-      };
+
     case RESET_POKEMON_INFO:
       return {
         ...state,
         current_pokemon: null,
-      };
-    case CLEAR_POKEMON_CHAIN:
-      return {
-        ...state,
+        current_pokemon_species: null,
         chain: null,
       };
 
@@ -90,16 +74,11 @@ const PokemonReducer = (state, action) => {
         ...state,
         regional_pokemon: null,
       };
-    case CLEAR_POKEMON_SPECIES:
-      return {
-        ...state,
-        current_pokemon_species: null,
-      };
+
     case ERROR:
       return {
         ...state,
-        error: action.payload,
-        loading: false,
+        error: payload,
       };
     default:
       return state;

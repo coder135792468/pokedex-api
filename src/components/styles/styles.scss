@@ -1,6 +1,7 @@
-$moves: #ff1f1f;
-$bg: #ffcb05;
-$header: #003a70;
+$moves: #82ce8d;
+$bg: #1ed14d;
+$header: #00ba37;
+
 .card {
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
@@ -42,4 +43,32 @@ $header: #003a70;
 
 section {
   background-color: $bg;
+}
+.details {
+  maxheight: 200px;
+  overflow-y: scroll;
+  background-color: rgb(207, 241, 183);
+  padding: 4px 0;
+  span {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 4px;
+    margin-left: 5px;
+    color: white;
+    border-radius: 40px;
+    background-color: green;
+  }
+}
+
+.error_page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 100px);
+  h1 {
+    font-family: "sans-serif";
+    font-size: 2rem;
+  }
 }

@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Card, Button } from "react-bootstrap";
+import React, { useContext, useEffect } from "react";
+import { Card } from "react-bootstrap";
 
 import PokemonContext from "../store/PokemonContext";
 import PokemonDetailList from "./layouts/PokemonDetailList";
@@ -11,34 +11,24 @@ import PokemonMoves from "./layouts/PokemonMoves";
 import { Helmet } from "react-helmet";
 import "./styles/styles.scss";
 import ScrollButton from "./layouts/ScrollButton";
+import Error from "./layouts/Error";
 const PokemonInfoScreen = ({ match }) => {
   const pokemonContext = useContext(PokemonContext);
   const {
     loading,
     getPokemonInfo,
-    resetPokemonInfo,
-    getPokemonSpecies,
-    clearPokemonSpecies,
-    current_pokemon_species,
+
     current_pokemon,
-    clearEvolutionChain,
     error,
   } = pokemonContext;
 
   const id = match.params.id;
-  const [showInfoType, setShowInfoType] = useState("ability");
 
   useEffect(() => {
-    resetPokemonInfo();
     getPokemonInfo(id);
-    clearPokemonSpecies();
-    getPokemonSpecies(id);
-    clearEvolutionChain();
     // eslint-disable-next-line
   }, [id]);
-  return loading && !error ? (
-    <Loader />
-  ) : (
+  return !loading && !error ? (
     <section>
       <Helmet>
         <title>Pokemon Info</title>
@@ -47,7 +37,7 @@ const PokemonInfoScreen = ({ match }) => {
           content="Get a Single Pokemon Infomation"
         ></meta>
       </Helmet>
-      <Card className="py-1">
+      <Card className="py-1" style={{ background: "#b8e6bf" }}>
         <SkipPageButtons page={id} />
         <Card.Img
           variant="top"
@@ -64,20 +54,19 @@ const PokemonInfoScreen = ({ match }) => {
           <Card.Text
             style={{ justifyContent: "space-between" }}
             className="d-flex my-4"
-          >
-            <Button onClick={() => setShowInfoType("ability")}>
-              View Abilities
-            </Button>
-            <Button onClick={() => setShowInfoType("type")}>View Type</Button>
-          </Card.Text>
+          ></Card.Text>
         </Card.Body>
-        <PokemonDetailList info={current_pokemon} type={showInfoType} />
+        <PokemonDetailList info={current_pokemon} />
       </Card>
       <PokemonBaseStat poke={current_pokemon} />
-      <PokemonEvolve chain_url={current_pokemon_species?.evolution_chain.url} />
+      <PokemonEvolve />
       <PokemonMoves info={current_pokemon} />
       <ScrollButton top={500} />
     </section>
+  ) : loading ? (
+    <Loader />
+  ) : (
+    <Error error={error} />
   );
 };
 
